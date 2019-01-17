@@ -1,6 +1,7 @@
 "use strict";
+const urlAPI="http://192.168.2.101/EncuestaApp/";
 $(document).ready(function () {
-    
+
     /* url  navigation active */
     var url = window.location;
     function menuitems() {
@@ -11,8 +12,8 @@ $(document).ready(function () {
     }
     menuitems();
 
-    
-    
+
+
     /* sidebar left  expand collapase */
     $('.menu-left').on('click', function () {
         $('body').addClass('menu-left-open');
