@@ -26,7 +26,8 @@ switch($_REQUEST["action"])
 {
   case "getEncuestas":
 $usuario=$_REQUEST["usuario"];
-$stmt = $dbh->prepare("SELECT preguntas.encuesta_id,encuestas.titulo,count(*) as cantpreguntas FROM `preguntas` inner join encuestas on encuestas.id=preguntas.encuesta_id  where preguntas.encuesta_id=4  group by preguntas.encuesta_id,encuestas.titulo");
+//ToDo: agregar filtro por usuario
+$stmt = $dbh->prepare("SELECT preguntas.encuesta_id,encuestas.titulo,count(*) as cantpreguntas FROM `preguntas` inner join encuestas on encuestas.id=preguntas.encuesta_id    group by preguntas.encuesta_id,encuestas.titulo");
       $stmt->execute();
   $result = $stmt->fetchAll();
   if($stmt->rowCount()==0)
@@ -80,7 +81,7 @@ $stmt = $dbh->prepare("SELECT preguntas.encuesta_id,encuestas.titulo,count(*) as
 
   case "getPreguntaDetalle":
   $idPregunta=$_REQUEST["idPregunta"];
-  $stmt = $dbh->prepare("SELECT  elecciones.id,elecciones.descripcion,tipos.clase from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id where pregunta_id=".$idPregunta." and estado is null");
+  $stmt = $dbh->prepare("SELECT  elecciones.id,elecciones.descripcion,tipos.clase,tipos.id as idclase from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id where pregunta_id=".$idPregunta." and estado is null");
         $stmt->execute();
     $result = $stmt->fetchAll();
     if($stmt->rowCount()==0)
@@ -99,7 +100,7 @@ $stmt = $dbh->prepare("SELECT preguntas.encuesta_id,encuestas.titulo,count(*) as
               $first = false;
           }
 
-          $json .= '{"id":"'.$row['id'].'","nombre":"'.$row['descripcion'].'","clase":"'.$row['clase'].'"}';
+          $json .= '{"id":"'.$row['id'].'","nombre":"'.$row['descripcion'].'","clase":"'.$row['clase'].'","clase_id":"'.$row['idclase'].'"}';
 
        }
     }
