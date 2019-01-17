@@ -38,5 +38,45 @@ function onDeviceReady() {
 
 function populateDB()
 {
+//copiar tabla elecciones
+$.ajax({
+ type: "POST",
+ crossDomain: true,
+ url: urlAPI+"bdfetch.php?tabla=elecciones",
+ processData: false,
+ contentType: "application/json"
+})
+.success(function(datae, textStatus, jqXHR){
+  for(var i=0;i<datae.length;i++){
+  db.transaction(function (tx) {
+      tx.executeSql("insert into elecciones (id ,descripcion) values ("+datae[i].id+",'"+datae[i].descripcion+"')");
+  }, function (error) {
+      alert('transaction error elecciones: ' + error.message);
+  });
+}
+})
+.fail(function(jqXHR, textStatus, errorThrown){
+alert("error");
+});
 
+//copiar tabla elecciones
+$.ajax({
+ type: "POST",
+ crossDomain: true,
+ url: urlAPI+"bdfetch.php?tabla=encuestas",
+ processData: false,
+ contentType: "application/json"
+})
+.success(function(datae, textStatus, jqXHR){
+  for(var i=0;i<datae.length;i++){
+  db.transaction(function (tx) {
+      tx.executeSql("insert into encuestas (id ,titulo,fecha_inicio,fecha_cierre,fecha_creacion) values ("+datae[i].id+",'"+datae[i].titulo+"','"+datae[i].fecha_inicio+"','"+datae[i].fecha_cierre+"','"+datae[i].fecha_creacion+"')");
+  }, function (error) {
+      alert('transaction error elecciones: ' + error.message);
+  });
+}
+})
+.fail(function(jqXHR, textStatus, errorThrown){
+alert("error");
+});
 }
