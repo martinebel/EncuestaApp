@@ -20,8 +20,8 @@ function onDeviceReady() {
     //y descargar los datos
     db.transaction(function (tx) {
       tx.executeSql("SELECT * from usuarios", function (tx, resultSet) {
-        if(resultSet.rows.length>0){window.location.href="login.html";}
-        else{populateDB();}
+        if(resultSet.rows.length==0){populateDB();}
+        window.location.href="login.html";
         },
         function (tx, error) {
             alert('SELECT error: ' + error.message);
@@ -59,7 +59,7 @@ $.ajax({
 alert("error");
 });
 
-//copiar tabla elecciones
+//copiar tabla encuestas
 $.ajax({
  type: "POST",
  crossDomain: true,
@@ -72,11 +72,96 @@ $.ajax({
   db.transaction(function (tx) {
       tx.executeSql("insert into encuestas (id ,titulo,fecha_inicio,fecha_cierre,fecha_creacion) values ("+datae[i].id+",'"+datae[i].titulo+"','"+datae[i].fecha_inicio+"','"+datae[i].fecha_cierre+"','"+datae[i].fecha_creacion+"')");
   }, function (error) {
-      alert('transaction error elecciones: ' + error.message);
+      alert('transaction error encuestas: ' + error.message);
   });
 }
 })
 .fail(function(jqXHR, textStatus, errorThrown){
 alert("error");
 });
+
+//copiar tabla opciones
+$.ajax({
+ type: "POST",
+ crossDomain: true,
+ url: urlAPI+"bdfetch.php?tabla=opciones",
+ processData: false,
+ contentType: "application/json"
+})
+.success(function(datae, textStatus, jqXHR){
+  for(var i=0;i<datae.length;i++){
+  db.transaction(function (tx) {
+      tx.executeSql("insert into opciones (id,eleccion_id,tipo_id,pregunta_id,estado) values ("+datae[i].id+",'"+datae[i].eleccion_id+"','"+datae[i].tipo_id+"','"+datae[i].pregunta_id+"',null)");
+  }, function (error) {
+      alert('transaction error opciones: ' + error.message);
+  });
+}
+})
+.fail(function(jqXHR, textStatus, errorThrown){
+alert("error");
+});
+
+//copiar tabla preguntas
+$.ajax({
+ type: "POST",
+ crossDomain: true,
+ url: urlAPI+"bdfetch.php?tabla=preguntas",
+ processData: false,
+ contentType: "application/json"
+})
+.success(function(datae, textStatus, jqXHR){
+  for(var i=0;i<datae.length;i++){
+  db.transaction(function (tx) {
+      tx.executeSql("insert into preguntas (id ,descripcion,encuesta_id) values ("+datae[i].id+",'"+datae[i].descripcion+"','"+datae[i].encuesta_id+"')");
+  }, function (error) {
+      alert('transaction error preguntas: ' + error.message);
+  });
+}
+})
+.fail(function(jqXHR, textStatus, errorThrown){
+alert("error");
+});
+
+//copiar tabla tipos
+$.ajax({
+ type: "POST",
+ crossDomain: true,
+ url: urlAPI+"bdfetch.php?tabla=tipos",
+ processData: false,
+ contentType: "application/json"
+})
+.success(function(datae, textStatus, jqXHR){
+  for(var i=0;i<datae.length;i++){
+  db.transaction(function (tx) {
+      tx.executeSql("insert into tipos (id ,clase) values ("+datae[i].id+",'"+datae[i].clase+"')");
+  }, function (error) {
+      alert('transaction error tipos: ' + error.message);
+  });
+}
+})
+.fail(function(jqXHR, textStatus, errorThrown){
+alert("error");
+});
+
+//copiar tabla usuarios
+$.ajax({
+ type: "POST",
+ crossDomain: true,
+ url: urlAPI+"bdfetch.php?tabla=usuarios",
+ processData: false,
+ contentType: "application/json"
+})
+.success(function(datae, textStatus, jqXHR){
+  for(var i=0;i<datae.length;i++){
+  db.transaction(function (tx) {
+      tx.executeSql("insert into usuarios (id ,nombre,password,tipo) values ("+datae[i].id+",'"+datae[i].nombre+"','"+datae[i].password+"','"+datae[i].tipo+"')");
+  }, function (error) {
+      alert('transaction error usuarios: ' + error.message);
+  });
+}
+})
+.fail(function(jqXHR, textStatus, errorThrown){
+alert("error");
+});
+
 }
