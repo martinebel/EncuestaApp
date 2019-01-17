@@ -59,7 +59,10 @@ $.ajax({
  contentType: "application/json"
 })
 .success(function(datae, textStatus, jqXHR){
-alert(datae[0].nombre);
+localStorage.setItem("nombreUsuario",datae[0].nombre);
+localStorage.setItem("tipoUsuario",datae[0].tipo);
+localStorage.setItem("idUsuario",datae[0].id);
+window.location.href="content.html";
 })
 .fail(function(jqXHR, textStatus, errorThrown){
 alert("error");
