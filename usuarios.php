@@ -1,28 +1,40 @@
 <?php
 require 'db.php';
 
-$html="";
+$usuario=$_REQUEST["usuario"];
+$pass=$_REQUEST["pass"];
+
 $return = array();
   $json = "[";
   $first = true;
 
-$stmt = $dbh->prepare("SELECT productos.modeloauto from productos where marcaauto='".$_REQUEST['clave']."' group by modeloauto order by modeloauto asc");
+$stmt = $dbh->prepare("SELECT * from usuarios where nombre='".$usuario."' and password='".$pass."'");
       $stmt->execute();
   $result = $stmt->fetchAll();
-  foreach($result as $row)
+  if($stmt->rowCount()==0)
   {
+    header("HTTP/1.1 404 NotFound");
+    http_response_code(404);
+    //$json = '{"id":"'.$row['idUsuario'].'","nombre":"'.$row['nombre'].'","tipo":"'.$row['tipo'].'"}';
+  }
+  else {
+    foreach($result as $row)
+    {
 
 
 
-    if(!$first){
-          $json .=  ",";
-      }else{
-          $first = true;
-      }
+      if(!$first){
+            $json .=  ",";
+        }else{
+            $first = false;
+        }
+  header("HTTP/1.1 200 OK");
+  http_response_code(201);
+        $json .= '{"id":"'.$row['idUsuario'].'","nombre":"'.$row['nombre'].'","tipo":"'.$row['tipo'].'"}';
 
-      $json .= '{"modelo":"'.$row['modeloauto'].'"}';
+     }
+  }
 
-   }
 
 
   $json .= "]";
