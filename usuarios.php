@@ -17,7 +17,7 @@ $stmt = $dbh->prepare("SELECT productos.modeloauto from productos where marcaaut
     if(!$first){
           $json .=  ",";
       }else{
-          $first = false;
+          $first = true;
       }
 
       $json .= '{"modelo":"'.$row['modeloauto'].'"}';
