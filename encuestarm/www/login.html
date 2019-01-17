@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data:">
+
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <title>Hello World</title>
+    </head>
+    <body>
+      <div class="container">
+  <div class="row">
+  <div class="span12">
+
+      <fieldset>
+        <div id="legend">
+          <legend class="">Login</legend>
+        </div>
+        <div class="control-group">
+          <!-- Username -->
+          <label class="control-label"  for="username">Username</label>
+          <div class="controls">
+            <input type="text" name="usuario" id="usuario" placeholder="" class="input-xlarge">
+          </div>
+        </div>
+        <div class="control-group">
+          <!-- Password-->
+          <label class="control-label" for="password">Password</label>
+          <div class="controls">
+            <input type="password"  name="pass" placeholder="" id="pass" class="input-xlarge">
+          </div>
+        </div>
+        <div class="control-group">
+          <!-- Button -->
+          <div class="controls">
+            <button class="btn btn-success" id="submit">Login</button>
+          </div>
+        </div>
+      </fieldset>
+
+  </div>
+</div>
+</div>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    </body>
+</html>
+
+<script>
+$("#submit").on( "click", function() {
+$.ajax({
+ type: "POST",
+ crossDomain: true,
+ url: "http://192.168.2.101/EncuestaApp/usuarios.php?usuario="+$("#usuario").val()+"&pass="+$("#pass").val(),
+ processData: false,
+ contentType: "application/json"
+})
+.success(function(datae, textStatus, jqXHR){
+localStorage.setItem("nombreUsuario",datae[0].nombre);
+localStorage.setItem("tipoUsuario",datae[0].tipo);
+localStorage.setItem("idUsuario",datae[0].id);
+window.location.href="content.html";
+})
+.fail(function(jqXHR, textStatus, errorThrown){
+alert("error");
+});
+});
+</script>
