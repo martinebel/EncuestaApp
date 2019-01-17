@@ -35,3 +35,8 @@ function onDeviceReady() {
     alert('Open database ERROR1: ' + JSON.stringify(error));
 });
 }
+
+function populateDB()
+{
+
+}
