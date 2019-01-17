@@ -24,7 +24,7 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
     $first = true;
 switch($_REQUEST["action"])
 {
-  case "getEncuestas":
+  case "getEncuestas": //obtener las encuestas para un usuario
 $usuario=$_REQUEST["usuario"];
 //ToDo: agregar filtro por usuario
 $stmt = $dbh->prepare("SELECT preguntas.encuesta_id,encuestas.titulo,count(*) as cantpreguntas FROM `preguntas` inner join encuestas on encuestas.id=preguntas.encuesta_id    group by preguntas.encuesta_id,encuestas.titulo");
@@ -52,7 +52,7 @@ $stmt = $dbh->prepare("SELECT preguntas.encuesta_id,encuestas.titulo,count(*) as
   }
   break;
 
-  case "getPreguntas":
+  case "getPreguntas": //obtener el listado de preguntas para una encuesta
   $idEncuesta=$_REQUEST["idEncuesta"];
   $stmt = $dbh->prepare("SELECT * from preguntas where encuesta_id=".$idEncuesta);
         $stmt->execute();
@@ -79,7 +79,7 @@ $stmt = $dbh->prepare("SELECT preguntas.encuesta_id,encuestas.titulo,count(*) as
     }
   break;
 
-  case "getPreguntaDetalle":
+  case "getPreguntaDetalle": //obtener las respuestas posibles para una pregunta
   $idPregunta=$_REQUEST["idPregunta"];
   $stmt = $dbh->prepare("SELECT  elecciones.id,elecciones.descripcion,tipos.clase,tipos.id as idclase from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id where pregunta_id=".$idPregunta." and estado is null");
         $stmt->execute();
