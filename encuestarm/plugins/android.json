@@ -9,6 +9,9 @@
   "installed_plugins": {
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.encuesta.rm"
+    },
+    "cordova-sqlite-storage": {
+      "PACKAGE_NAME": "com.encuesta.rm"
     }
   },
   "dependent_plugins": {}
