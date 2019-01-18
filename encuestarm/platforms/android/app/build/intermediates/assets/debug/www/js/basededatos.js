@@ -1,37 +1,39 @@
+document.addEventListener("deviceready", onDeviceReady, false);
 
-var db = null;
-$("#estado").append("<p>iniciando</p>");
+function onDeviceReady() {
+var db = window.sqlitePlugin.openDatabase({name: "test.db"});
+db.executeSql("DROP TABLE IF EXISTS tt");
+db.executeSql("CREATE TABLE tt (data)");
 
+$.ajax({
+    // THANKS: http://stackoverflow.com/a/8654078/1283667
+    url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=usuarios",
+    dataType: "json",
 
-//iniciar base de datos, crear si no existe. consultar por una tabla, si no
-//devuelve filas, tengo que conectarme al servidor y leer los datos.
-document.addEventListener('deviceready', function() {
-  db = window.sqlitePlugin.openDatabase({
-    name: 'my.db',
-    location: 'default',
-  });
-
-  db.transaction(function(tx) {
-    tx.executeSql('CREATE TABLE IF NOT EXISTS DemoTable (name, score)');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS  elecciones (id INTEGER PRIMARY KEY,descripcion)');
-    tx.executeSql('CREATE TABLE  IF NOT EXISTS encuestas (id INTEGER,titulo,fecha_inicio,fecha_cierre,fecha_creacion)');
-    tx.executeSql('CREATE TABLE  IF NOT EXISTS opciones (id INTEGER  PRIMARY KEY AUTOINCREMENT,eleccion_id,tipo_id,pregunta_id,estado)');
-    tx.executeSql('CREATE TABLE  IF NOT EXISTS preguntas (id INTEGER,descripcion,encuesta_id INTEGER)');
-    tx.executeSql('CREATE TABLE  IF NOT EXISTS tipos (id INTEGER,clase)');
-    tx.executeSql('CREATE TABLE  IF NOT EXISTS usuarios (idUsuario INTEGER,nombre,password,tipo)');
-    tx.executeSql('INSERT INTO DemoTable VALUES (?,?)', ['Alice', 101]);
-    tx.executeSql('INSERT INTO DemoTable VALUES (?,?)', ['Betty', 202]);
-  }, function(error) {
-      $("#estado").append('<p>Transaction ERROR: ' + error.message+'</p>');
-  }, function() {
-      $("#estado").append('<p>Populated database OK'+'</p>');
-  });
-
-  db.transaction(function(tx) {
-   tx.executeSql('SELECT count(*) AS mycount FROM usuarios', [], function(tx, rs) {
-      $("#estado").append('<p>Record count (expected to be 2): ' + rs.rows.item(0).mycount+'</p>');
-   }, function(tx, error) {
-       $("#estado").append('<p>SELECT error: ' + error.message+'</p>');
-   });
- });
+    success: function(res) {
+      $("#estado").append('<p>Got AJAX response: ' + JSON.stringify(res)+'</p>');
+      //alert('Got AJAX response');
+      db.transaction(function(tx) {
+        // http://stackoverflow.com/questions/33240009/jquery-json-cordova-issue
+        $.each(res, function(i, item) {
+          $("#estado").append('<p>item: ' + JSON.stringify(item)+'</p>');
+          tx.executeSql("INSERT INTO tt values (?)", JSON.stringify(item.nombre));
+        });
+      }, function(e) {
+      $("#estado").append('<p>Transaction error: ' + e.message+'</p>');
+        alert('Transaction error: ' + e.message);
+      }, function() {
+        db.executeSql('SELECT COUNT(*) FROM tt', [], function(res) {
+          $("#estado").append('<p>Check SELECT result: ' + JSON.stringify(res.rows.item(0))+'</p>');
+          alert('Transaction finished, check record count: ' + JSON.stringify(res.rows.item(0)));
+        });
+      });
+    },
+    error: function(e) {
+        $("#estado").append('<p>ajax error: ' + JSON.stringify(e)+'</p>');
+        alert('ajax error: ' + JSON.stringify(e));
+    }
 });
+$("#estado").append('<p>sent ajax'+'</p>');
+
+}
