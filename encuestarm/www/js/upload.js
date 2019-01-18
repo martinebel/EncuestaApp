@@ -43,7 +43,7 @@ function subirdatos()
                 db.executeSql('delete from tipos');
                 db.executeSql('delete from usuarios');
                 window.localStorage.clear();
-                window.location.href="index.html"
+                window.location.href="index.html";
               },
               error: function(e) {
 
@@ -54,7 +54,7 @@ function subirdatos()
                 db.executeSql('delete from tipos');
                 db.executeSql('delete from usuarios');
                 window.localStorage.clear();
-                window.location.href="index.html"
+                window.location.href="index.html";
               }
           });
 }
