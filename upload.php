@@ -25,9 +25,11 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
     // here i would like use foreach:
 
     foreach($data as $d){
+    //  echo "INSERT INTO opciones (id, eleccion_id, tipo_id, pregunta_id, estado) VALUES (NULL,'".$d['eleccion_id']."','".$d['tipo_id']."','".$d['pregunta_id']."','".$d['estado']."')";
        $stmt = $dbh->prepare("INSERT INTO opciones (id, eleccion_id, tipo_id, pregunta_id, estado) VALUES (NULL,'".$d['eleccion_id']."','".$d['tipo_id']."','".$d['pregunta_id']."','".$d['estado']."')");
       $stmt->execute();
     }
-  die();
-
+//  die();
+header("HTTP/1.1 200 OK");
+http_response_code(200);
   ?>
