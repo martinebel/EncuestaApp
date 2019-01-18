@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Thu Jan 17 23:07:05 ART 2019
+#Thu Jan 17 23:48:44 ART 2019
 5.base=C\:\\xampp\\htdocs\\EncuestaApp\\encuestarm\\platforms\\android\\app\\build\\intermediates\\assets\\debug
 22.path=www/css/materializeicon/material-icons.css
 32.set=NATIVE_RESOURCE

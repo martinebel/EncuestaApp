@@ -9,52 +9,53 @@ function onDeviceReady() {
   var db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
 //crear las tablas si no existen
 $("#estado").append("<p>bd abierta</p>");
-    db.transaction(function (tx) {
-    tx.executeSql('CREATE TABLE  elecciones (id INTEGER PRIMARY KEY,descripcion)');
-    tx.executeSql('CREATE TABLE  encuestas (id INTEGER,titulo,fecha_inicio,fecha_cierre,fecha_creacion)');
-    tx.executeSql('CREATE TABLE  opciones (id INTEGER  PRIMARY KEY AUTOINCREMENT,eleccion_id,tipo_id,pregunta_id,estado)');
-    tx.executeSql('CREATE TABLE  preguntas (id INTEGER,descripcion,encuesta_id INTEGER)');
-    tx.executeSql('CREATE TABLE  tipos (id INTEGER,clase)');
-    tx.executeSql('CREATE TABLE  usuarios (idUsuario INTEGER,nombre,password,tipo)');
+    db.executeSql('CREATE TABLE  elecciones (id INTEGER PRIMARY KEY,descripcion)');
+    db.executeSql('CREATE TABLE  encuestas (id INTEGER,titulo,fecha_inicio,fecha_cierre,fecha_creacion)');
+    db.executeSql('CREATE TABLE  opciones (id INTEGER  PRIMARY KEY AUTOINCREMENT,eleccion_id,tipo_id,pregunta_id,estado)');
+    db.executeSql('CREATE TABLE  preguntas (id INTEGER,descripcion,encuesta_id INTEGER)');
+    db.executeSql('CREATE TABLE  tipos (id INTEGER,clase)');
+    db.executeSql('CREATE TABLE  usuarios (idUsuario INTEGER,nombre,password,tipo)');
 
     $("#estado").append("<p>create table finalizado</p>");
-}, function (error) {
-    $("#estado").append('<p>transaction error1: ' + error.message+'</p>');
-}, function () {
-    //hacer una consulta a usuarios. si está vacia tengo que conectarme al servidor
-    //y descargar los datos
-consulta();
-});
+
+    $.ajax({
+                // THANKS: http://stackoverflow.com/a/8654078/1283667
+                url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=usuarios",
+                dataType: "json",
+
+                success: function(res) {
+                  alert('Got AJAX response: ' + JSON.stringify(res));
+                  //alert('Got AJAX response');
+                  db.transaction(function(tx) {
+                    // http://stackoverflow.com/questions/33240009/jquery-json-cordova-issue
+                    $.each(res, function(i, item) {
+                      alert('item: ' + JSON.stringify(item.nombre));
+                      tx.executeSql("INSERT INTO usuarios values (?,?,?,?)", [JSON.stringify(item.idUsuario),JSON.stringify(item.nombre),JSON.stringify(item.password),JSON.stringify(item.tipo)]);
+
+                    });
+                  }, function(e) {
+                    console.log('Transaction error: ' + e.message);
+                    alert('Transaction error: ' + e.message);
+                  }, function() {
+                    db.executeSql('SELECT COUNT(*) FROM usuarios', [], function(res) {
+                      console.log('Check SELECT result: ' + JSON.stringify(res.rows.item(0)));
+                      alert('Transaction finished, check record count: ' + JSON.stringify(res.rows.item(0)));
+                    });
+                  });
+                },
+                error: function(e) {
+                    console.log('ajax error: ' + JSON.stringify(e));
+                    alert('ajax error: ' + JSON.stringify(e));
+                }
+            });
+
 
 }, function (error) {
   $("#estado").append('<p>Open database ERROR1: ' + JSON.stringify(error)+'</p>');
 });
 }
 
-function consulta()
-{
-  var db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
-  db.transaction(function (tx) {
 
-    tx.executeSql("SELECT * from usuarios", function (tx, resultSet) {
-      $("#estado").append('<p>SELECT results: ' +resultSet.rows.length+'</p>');
-
-      },
-      function (tx, error) {
-          $("#estado").append('<p>SELECT12 error: ' + error.message+'</p>');
-      });
-  }, function (error) {
-    $("#estado").append('<p>transaction error2: ' + error.message+'</p>');
-  }, function () {
-      $("#estado").append('<p>transaction ok'+'</p>');
-  });
-
-
-
-}, function (error) {
-  $("#estado").append('<p>Open database ERROR2: ' + JSON.stringify(error)+'</p>');
-});
-}
 
 function populateDB()
 {
