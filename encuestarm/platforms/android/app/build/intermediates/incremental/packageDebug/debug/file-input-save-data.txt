@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Fri Jan 18 14:16:36 ART 2019
+#Fri Jan 18 15:03:46 ART 2019
 5.base=C\:\\xampp\\htdocs\\EncuestaApp\\encuestarm\\platforms\\android\\app\\build\\intermediates\\assets\\debug
 22.path=www/js/popper.min.js
 32.set=ASSET

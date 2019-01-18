@@ -152,13 +152,14 @@ function getPreguntaOpciones()
   {
     db.transaction(function (tx) {
 
-           var query = "SELECT  elecciones.id,elecciones.descripcion,tipos.clase,tipos.id as idclase from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id where  estado is null";
+           var query = "SELECT  elecciones.id,elecciones.descripcion,tipos.clase,tipos.id as idclase,opciones.estado,opciones.pregunta_id from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id where estado is null";
 
            tx.executeSql(query, [], function (tx, resultSet) {
              $("#content").empty();
               $("#content").append('<legend>'+arrayPreguntas[currentPregunta].nombre+'</legend>'); //titulo
                for(var x = 0; x < resultSet.rows.length; x++) {
-                 if(resultSet.rows.item(x).pregunta_id=arrayPreguntas[currentPregunta].id){
+                 if(resultSet.rows.item(x).pregunta_id==arrayPreguntas[currentPregunta].id){
+
                  //mostrar mis opciones para esta pregunta
                  switch (resultSet.rows.item(x).clase) { //segun el tipo mostrar el control adecuado
                      //en cada elemento se agregan atributos para mantener informaion importante
@@ -196,8 +197,7 @@ function getPreguntaOpciones()
   else {
     //llegue al final de la encuesta
     //guardo los resultados
-    alert(arrayResultados);
-    //ToDo: almacenar los resultados en una BD?
+  saveResults();
 
     //vaciar el div
     $("#content").empty();
@@ -206,6 +206,25 @@ function getPreguntaOpciones()
   }
 }
 
+function saveResults()
+{
+
+  $.ajax({
+    type: 'POST',
+    url: 'http://192.168.2.101/EncuestaApp/upload.php',
+    data: {data : JSON.stringify(arrayResultados)},
+              dataType: "json",
+              async: false,
+
+              success: function(res) {
+                  alert(res);
+              },
+              error: function(e) {
+
+                  alert('ajax error: ' + JSON.stringify(e));
+              }
+          });
+}
 
 function mensaje(msg)
 {
