@@ -32,4 +32,5 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
 //  die();
 header("HTTP/1.1 200 OK");
 http_response_code(200);
+echo '{"message": "ok"}';
   ?>

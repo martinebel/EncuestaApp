@@ -47,7 +47,14 @@ function subirdatos()
               },
               error: function(e) {
 
-                  alert('ajax error: ' + JSON.stringify(e));
+                db.executeSql('delete from elecciones');
+                db.executeSql('delete from encuestas');
+                db.executeSql('delete from opciones');
+                db.executeSql('delete from preguntas');
+                db.executeSql('delete from tipos');
+                db.executeSql('delete from usuarios');
+                window.localStorage.clear();
+                window.location.href="index.html"
               }
           });
 }
