@@ -210,8 +210,7 @@ function pendientes()
 {
   db.transaction(function(tx) {
   tx.executeSql('SELECT count(*) AS mycount FROM opciones where estado is not null', [], function(tx, rs) {
-    //mensaje("filas: "+rs.rows.item(0).mycount);
-    alert(rs.rows.item(0).mycount);
+    $("#pendientes").html('<i class="material-icons">star</i> Actualizar datos <span class="badge badge-secondary">'+rs.rows.item(0).mycount+'</span>');
   }, function(tx, error) {
     mensaje('SELECT error: ' + error.message);
   });
@@ -245,25 +244,6 @@ function saveResults()
 
 }
 
-/*function saveResults()
-{
-
-  $.ajax({
-    type: 'POST',
-    url: 'http://192.168.2.101/EncuestaApp/upload.php',
-    data: {data : JSON.stringify(arrayResultados)},
-              dataType: "json",
-              async: false,
-
-              success: function(res) {
-                  alert(res);
-              },
-              error: function(e) {
-
-                  alert('ajax error: ' + JSON.stringify(e));
-              }
-          });
-}*/
 
 function mensaje(msg)
 {
