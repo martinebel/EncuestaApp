@@ -4,7 +4,7 @@ var db = null;
 document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
-db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
+db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 }, function (error) {
     alert('Open database ERROR: ' + JSON.stringify(error));
 });
@@ -12,24 +12,32 @@ db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'defaul
 
 $("#submit").on("click",function(){
 
-  db.transaction(function(tx) {
-  tx.executeSql("SELECT * from usuarios where nombre='"+$("#usuario").val()+"' and password='"+$("#pass").val()+"'", [], function(tx, rs) {
-    if(rs.rows.length==0)
-    {
-      $("#error").css("display","block");
-    }
-    else
-    {
-      for(var x = 0; x < rs.rows.length; x++) {
-              localStorage.setItem("nombreUsuario",rs.rows.item(x).nombre);
-              localStorage.setItem("tipoUsuario",rs.rows.item(x).tipo);
-              localStorage.setItem("idUsuario",rs.rows.item(x).id);
-          }
-      window.location.href="content.html";
-    }
-  }, function(tx, error) {
-    alert('SELECT error: ' + error.message);
-  });
-  });
+  db.transaction(function (tx) {
 
+      var query = "SELECT * from usuarios where nombre=? and password=?";
+
+      tx.executeSql(query, [$("#usuario").val(),$("#pass").val()], function (tx, resultSet) {
+        alert(resultSet.rows.length);
+        if(resultSet.rows.length==0)
+        {
+          $("#error").css("display","block");
+        }
+        else
+        {
+          for(var x = 0; x < resultSet.rows.length; x++) {
+                  localStorage.setItem("nombreUsuario",resultSet.rows.item(x).nombre);
+                  localStorage.setItem("tipoUsuario",resultSet.rows.item(x).tipo);
+                  localStorage.setItem("idUsuario",resultSet.rows.item(x).id);
+              }
+          window.location.href="content.html";
+        }
+      },
+      function (tx, error) {
+          alert('SELECT error: ' + error.message);
+      });
+  }, function (error) {
+      alert('transaction error: ' + error.message);
+  }, function () {
+      alert('transaction ok');
+  });
 });

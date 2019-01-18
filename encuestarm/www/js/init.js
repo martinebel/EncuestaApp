@@ -8,27 +8,27 @@ opciones();
 preguntas();
 tipos();
 usuarios();
-window.location.href="login.html";
+
 }
 
 function elecciones()
 {
-var db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
+var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
               url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=elecciones",
               dataType: "json",
               async: false,
               success: function(res) {
-                mensaje("Copiando datos 1/6");
+                mensaje("Copiando datos");
                 db.transaction(function(tx) {
                   $.each(res, function(i, item) {
-                    tx.executeSql("INSERT INTO elecciones values (?,?)", [JSON.stringify(item.id),JSON.stringify(item.descripcion)]);
+                    tx.executeSql("INSERT INTO elecciones values (?,?)", [item.id,item.descripcion]);
 
                   });
                 }, function(e) {
-                  mensaje('Transaction error: ' + e.message);
-                  alert('Transaction error: ' + e.message);
+                  mensaje('Transaction error1: ' + e.message);
+                  alert('Transaction error1: ' + e.message);
                 }, function() {
 
                 });
@@ -47,22 +47,22 @@ mensaje("Error abriendo BD: "+ JSON.stringify(error));
 
 function encuestas()
 {
-var db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
+var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
               url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=encuestas",
               dataType: "json",
               async: false,
               success: function(res) {
-                mensaje("Copiando datos 2/6");
+              //  mensaje("Copiando datos 2/6");
                 db.transaction(function(tx) {
                   $.each(res, function(i, item) {
-                    tx.executeSql("INSERT INTO encuestas values (?,?,?,?,?)", [JSON.stringify(item.id),JSON.stringify(item.titulo),JSON.stringify(item.fecha_inicio),JSON.stringify(item.fecha_cierre),JSON.stringify(item.fecha_creacion)]);
+                    tx.executeSql("INSERT INTO encuestas values (?,?,?,?,?)", [item.id,item.titulo,item.fecha_inicio,item.fecha_cierre,item.fecha_creacion]);
 
                   });
                 }, function(e) {
-                  mensaje('Transaction error: ' + e.message);
-                  alert('Transaction error: ' + e.message);
+                  mensaje('Transaction error2: ' + e.message);
+                  alert('Transaction error2: ' + e.message);
                 }, function() {
 
                 });
@@ -81,22 +81,22 @@ mensaje("Error abriendo BD: "+ JSON.stringify(error));
 
 function opciones()
 {
-var db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
+var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
               url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=opciones",
               dataType: "json",
               async: false,
               success: function(res) {
-                mensaje("Copiando datos 3/6");
+              //  mensaje("Copiando datos 3/6");
                 db.transaction(function(tx) {
                   $.each(res, function(i, item) {
-                    tx.executeSql("INSERT INTO opciones values (?,?,?,?,?)", [JSON.stringify(item.id),JSON.stringify(item.eleccion_id),JSON.stringify(item.tipo_id),JSON.stringify(item.pregunta_id),JSON.stringify(item.estado)]);
+                    tx.executeSql("INSERT INTO opciones values (?,?,?,?,?)", [item.id,item.eleccion_id,item.tipo_id,item.pregunta_id,item.estado]);
 
                   });
                 }, function(e) {
-                  mensaje('Transaction error: ' + e.message);
-                  alert('Transaction error: ' + e.message);
+                  mensaje('Transaction error3: ' + e.message);
+                  alert('Transaction error3: ' + e.message);
                 }, function() {
 
                 });
@@ -115,22 +115,22 @@ mensaje("Error abriendo BD: "+ JSON.stringify(error));
 
 function preguntas()
 {
-var db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
+var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
               url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=preguntas",
               dataType: "json",
               async: false,
               success: function(res) {
-                mensaje("Copiando datos 4/6");
+              //  mensaje("Copiando datos 4/6");
                 db.transaction(function(tx) {
                   $.each(res, function(i, item) {
-                    tx.executeSql("INSERT INTO preguntas values (?,?,?)", [JSON.stringify(item.id),JSON.stringify(item.descripcion),JSON.stringify(item.encuesta_id)]);
+                    tx.executeSql("INSERT INTO preguntas values (?,?,?)", [item.id,item.descripcion,item.encuesta_id]);
 
                   });
                 }, function(e) {
-                  mensaje('Transaction error: ' + e.message);
-                  alert('Transaction error: ' + e.message);
+                  mensaje('Transaction error4: ' + e.message);
+                  alert('Transaction error4: ' + e.message);
                 }, function() {
 
                 });
@@ -149,22 +149,22 @@ mensaje("Error abriendo BD: "+ JSON.stringify(error));
 
 function tipos()
 {
-var db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
+var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
               url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=tipos",
               dataType: "json",
               async: false,
               success: function(res) {
-                mensaje("Copiando datos 5/6");
+              //  mensaje("Copiando datos 5/6");
                 db.transaction(function(tx) {
                   $.each(res, function(i, item) {
-                    tx.executeSql("INSERT INTO tipos values (?,?)", [JSON.stringify(item.id),JSON.stringify(item.clase)]);
+                    tx.executeSql("INSERT INTO tipos values (?,?)", [item.id,item.clase]);
 
                   });
                 }, function(e) {
-                  mensaje('Transaction error: ' + e.message);
-                  alert('Transaction error: ' + e.message);
+                  mensaje('Transaction error5: ' + e.message);
+                  alert('Transaction error5: ' + e.message);
                 }, function() {
 
                 });
@@ -183,24 +183,25 @@ mensaje("Error abriendo BD: "+ JSON.stringify(error));
 
 function usuarios()
 {
-var db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
+var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
               url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=usuarios",
               dataType: "json",
               async: false,
               success: function(res) {
-                mensaje("Copiando datos 6/6");
+              //  mensaje("Copiando datos 6/6");
                 db.transaction(function(tx) {
                   $.each(res, function(i, item) {
-                    tx.executeSql("INSERT INTO usuarios values (?,?,?,?)", [JSON.stringify(item.idUsuario),JSON.stringify(item.nombre),JSON.stringify(item.password),JSON.stringify(item.tipo)]);
+                    tx.executeSql("INSERT INTO usuarios values (?,?,?,?)", [item.idUsuario,item.nombre,item.password,item.tipo]);
 
                   });
                 }, function(e) {
-                  mensaje('Transaction error: ' + e.message);
-                  alert('Transaction error: ' + e.message);
+                  mensaje('Transaction error6: ' + e.message);
+                  alert('Transaction error6: ' + e.message);
                 }, function() {
-
+                  mensaje("Finalizado");
+                  $("#estado").append('<a href="login.html" class="btn btn-block btn-success rounded border-0 z-3">Empezar</a>');
                 });
               },
               error: function(e) {
@@ -219,10 +220,5 @@ mensaje("Error abriendo BD: "+ JSON.stringify(error));
 
 function mensaje(msg)
 {
-  $("#estado p").fadeOut(300, function() { $("#estado p").remove(); });
-  $('#estado')
-    .append($('<p>'+msg+'</p>')
-        .hide()
-        .fadeIn(300)
-    );
+  $('#estado').append('<p>'+msg+'</p>');
 }
