@@ -18,7 +18,7 @@ function onDeviceReady() {
       for(var x = 0; x < resultSet.rows.length; x++) {
               $("#content").append('<ul class="list-group mb-4 media-list"><li class="list-group-item"><a href="#" class="media shadow-15 start"  data-preguntas="'+(resultSet.rows.item(x).cantpreguntas-1)+'" data-id="'+resultSet.rows.item(x).encuesta_id+'" data-title="'+resultSet.rows.item(x).titulo+'"><div class="media-body"><h3>'+resultSet.rows.item(x).titulo+'</h3><p>'+resultSet.rows.item(x).cantpreguntas+' preguntas</p></div></a></li></ul>');
           }
-
+pendientes();
     }, function(tx, error) {
       mensaje('SELECT error: ' + error.message);
     });
@@ -206,25 +206,44 @@ function getPreguntaOpciones()
   }
 }
 
+function pendientes()
+{
+  db.transaction(function(tx) {
+  tx.executeSql('SELECT count(*) AS mycount FROM opciones where estado is not null', [], function(tx, rs) {
+    $("#pendientes").html('<i class="material-icons">star</i> Actualizar datos <span class="badge badge-secondary">'+rs.rows.item(0).mycount+'</span>');
+  }, function(tx, error) {
+    mensaje('SELECT error: ' + error.message);
+  });
+});
+}
+
 function saveResults()
 {
 
-  $.ajax({
-    type: 'POST',
-    url: 'http://192.168.2.101/EncuestaApp/upload.php',
-    data: {data : JSON.stringify(arrayResultados)},
-              dataType: "json",
-              async: false,
+  db.transaction(function(tx) {
+  tx.executeSql('SELECT max(id) AS mycount FROM opciones', [], function(tx, rs) {
+    //mensaje("filas: "+rs.rows.item(0).mycount);
+    maximo=rs.rows.item(0).mycount;
+    maximo++;
+  }, function(tx, error) {
+    mensaje('SELECT error: ' + error.message);
+  });
+});
 
-              success: function(res) {
-                  alert(res);
-              },
-              error: function(e) {
+  db.transaction(function(tx) {
+    $.each(arrayResultados, function(i, item) {
+      tx.executeSql("INSERT INTO opciones values (?,?,?,?,?)", [maximo,item.eleccion_id,item.tipo_id,item.pregunta_id,item.estado]);
+      maximo++;
+    });
+  }, function(e) {
+    mensaje('Transaction error1: ' + e.message);
+    alert('Transaction error1: ' + e.message);
+  }, function() {
 
-                  alert('ajax error: ' + JSON.stringify(e));
-              }
-          });
+  });
+
 }
+
 
 function mensaje(msg)
 {

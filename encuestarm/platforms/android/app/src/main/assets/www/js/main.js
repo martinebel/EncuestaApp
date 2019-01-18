@@ -1,5 +1,5 @@
 "use strict";
-const urlAPI="http://192.168.2.101/EncuestaApp/";
+$("#username").html(localStorage.getItem("nombreUsuario")+' <span class="status-online bg-success"></span>');
 $(document).ready(function () {
 
     /* url  navigation active */
