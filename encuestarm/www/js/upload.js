@@ -1,4 +1,4 @@
-var urlAPI='http://192.168.2.101/EncuestaApp/';
+var urlAPI='http://codingosoft.com/encuesta/';
 
 var db = null;
 var arrayResultados  = new Array();
