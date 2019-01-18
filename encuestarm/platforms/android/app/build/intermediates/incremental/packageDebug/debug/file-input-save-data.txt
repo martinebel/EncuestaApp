@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Fri Jan 18 16:21:31 ART 2019
+#Fri Jan 18 16:36:25 ART 2019
 5.base=C\:\\xampp\\htdocs\\EncuestaApp\\encuestarm\\platforms\\android\\app\\build\\intermediates\\assets\\debug
 42.base=C\:\\xampp\\htdocs\\EncuestaApp\\encuestarm\\platforms\\android\\app\\build\\intermediates\\assets\\debug
 22.path=www/js/upload.js
