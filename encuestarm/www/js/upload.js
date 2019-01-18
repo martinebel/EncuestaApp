@@ -51,3 +51,9 @@ function subirdatos()
               }
           });
 }
+
+
+function mensaje(msg)
+{
+  alert(msg);
+}

@@ -69,7 +69,7 @@ function getEncuestas()
     for(var x = 0; x < resultSet.rows.length; x++) {
             $("#content").append('<ul class="list-group mb-4 media-list"><li class="list-group-item"><a href="#" class="media shadow-15 start"  data-preguntas="'+(resultSet.rows.item(x).cantpreguntas-1)+'" data-id="'+resultSet.rows.item(x).encuesta_id+'" data-title="'+resultSet.rows.item(x).titulo+'"><div class="media-body"><h3>'+resultSet.rows.item(x).titulo+'</h3><p>'+resultSet.rows.item(x).cantpreguntas+' preguntas</p></div></a></li></ul>');
         }
-
+pendientes();
   }, function(tx, error) {
     mensaje('SELECT error: ' + error.message);
   });
