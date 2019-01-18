@@ -6,7 +6,7 @@ document.addEventListener("deviceready", onDeviceReady, false);
 //devuelve filas, tengo que conectarme al servidor y leer los datos.
 function onDeviceReady() {
   $("#estado").append("<p>abriendo bd</p>");
-  db = window.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
+  db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
 //crear las tablas si no existen
 $("#estado").append("<p>bd abierta</p>");
     db.transaction(function (tx) {
@@ -16,23 +16,30 @@ $("#estado").append("<p>bd abierta</p>");
     tx.executeSql('CREATE TABLE IF NOT EXISTS  preguntas (id INTEGER,descripcion,encuesta_id INTEGER)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS  tipos (id INTEGER,clase)');
     tx.executeSql('CREATE TABLE IF NOT EXISTS  usuarios (idUsuario INTEGER,nombre,password,tipo)');
+    tx.executeSql("insert into  usuarios (idUsuario INTEGER,nombre,password,tipo) values (0,'martin','123','usuario')");
     $("#estado").append("<p>create table finalizado</p>");
 }, function (error) {
     $("#estado").append('<p>transaction error1: ' + error.message+'</p>');
 }, function () {
     //hacer una consulta a usuarios. si está vacia tengo que conectarme al servidor
     //y descargar los datos
-    db.transaction(function (tx) {
-      tx.executeSql("SELECT * from usuarios", function (tx, resultSet) {
-        if(resultSet.rows.length==0){populateDB();}
-        window.location.href="login.html";
-        },
-        function (tx, error) {
-          $("#estado").append('<p>SELECT error: ' + error.message+'</p>');
-        });
-    }, function (error) {
-        $("#estado").append('<p>transaction error2: ' + error.message+'</p>');
+
+});
+
+db.transaction(function (tx) {
+
+  tx.executeSql("SELECT * from usuarios", function (tx, resultSet) {
+    $("#estado").append('<p>SELECT results: ' +resultSet.rows.length+'</p>');
+    if(resultSet.rows.length==0){populateDB();}
+    window.location.href="login.html";
+    },
+    function (tx, error) {
+        $("#estado").append('<p>SELECT error: ' + error.message+'</p>');
     });
+}, function (error) {
+  $("#estado").append('<p>transaction error: ' + error.message+'</p>');
+}, function () {
+    $("#estado").append('<p>transaction ok'+'</p>');
 });
 
 }, function (error) {

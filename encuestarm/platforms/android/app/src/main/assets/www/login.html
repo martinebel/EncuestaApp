@@ -29,7 +29,7 @@
 </head>
 
 <body class="color-theme-blue push-content-right theme-light">
-  
+
       <div class="wrapper">
           <!-- page main start -->
           <div class="page">
@@ -98,7 +98,7 @@
 <script>
 var db = null;
 document.addEventListener("deviceready", onDeviceReady, false);
-db = window.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
+db = window.sqlitePlugin.sqlitePlugin.openDatabase({ name: 'encuestarm.db', location: 'default' }, function (db) {
 }, function (error) {
     alert('Open database ERROR: ' + JSON.stringify(error));
 });
