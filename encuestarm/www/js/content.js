@@ -7,39 +7,29 @@ var tituloEncuesta="";
 var arrayPreguntas;
 var arrayResultados  = new Array();
 
-/************************************************
-getEncuestas: obtiene un listado de las encuestas habilitadas para este usuario
-ToDo: modificar URL de la API
-ToDo: mejorar diseño en el append
-ToDo: implementar filtro por usuario en la API
-************************************************/
-function getEncuestas()
-{
-  //reinicio variables
-   totalPreguntas=0;
-   currentPregunta=0;
-   currentEncuesta=0;
-   tituloEncuesta="";
-   arrayPreguntas=[];
-   arrayResultados  = new Array();
-  $.ajax({
-   type: "POST",
-   crossDomain: true,
-   url: "http://192.168.2.101/EncuestaApp/encuestas.php?action=getEncuestas&usuario="+localStorage.getItem("idUsuario"),
-   processData: false,
-   contentType: "application/json"
-  })
-  .success(function(datae, textStatus, jqXHR){
-for(var i=0;i<datae.length;i++){
-  //ToDo: modificar este append para mejorar el diseño
-  $("#content").append('<a href="#" class="btn btn-primary start" data-preguntas="'+(datae[i].preguntas-1)+'" data-id="'+datae[i].id+'">'+datae[i].nombre+'</a>');
+document.addEventListener("deviceready", onDeviceReady, false);
+
+function onDeviceReady() {
+  var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
+    db.transaction(function(tx) {
+    tx.executeSql('SELECT preguntas.encuesta_id,encuestas.titulo,count(*) as cantpreguntas FROM preguntas inner join encuestas on encuestas.id=preguntas.encuesta_id group by preguntas.encuesta_id,encuestas.titulo', [], function(tx, resultSet) {
+
+      for(var x = 0; x < resultSet.rows.length; x++) {
+              $("#content").append('<ul class="list-group mb-4 media-list"><li class="list-group-item"><a href="#" class="media shadow-15 start"  data-preguntas="'+(resultSet.rows.item(x).cantpreguntas-1)+'" data-id="'+resultSet.rows.item(x).encuesta_id+'"><div class="media-body"><h3>'+resultSet.rows.item(x).titulo+'</h3><p>'+resultSet.rows.item(x).cantpreguntas+' preguntas</p></div></a></li></ul>');
+          }
+
+    }, function(tx, error) {
+      mensaje('SELECT error: ' + error.message);
+    });
+  });
+
+
+}, function (error) {
+  mensaje("Error abriendo BD: "+ JSON.stringify(error));
+});
 }
 
-  })
-  .fail(function(jqXHR, textStatus, errorThrown){
-  alert("error");
-  });
-}
+
 
 /************************************************
 esto responde al click del boton de la encuesta que se quiere iniciar
