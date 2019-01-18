@@ -35,26 +35,39 @@ function subirdatos()
               async: false,
 
               success: function(res) {
+                db.transaction(function (tx) {
+                    // ...
+                    tx.executeSql('delete from elecciones');
+                    tx.executeSql('delete from encuestas');
+                    tx.executeSql('delete from opciones');
+                    tx.executeSql('delete from preguntas');
+                    tx.executeSql('delete from tipos');
+                    tx.executeSql('delete from usuarios');
+                }, function (error) {
+                    alert('transaction error: ' + error.message);
+                }, function () {
+                  window.localStorage.clear();
+                  window.location.href="index.html";
+                });
 
-                db.executeSql('delete from elecciones');
-                db.executeSql('delete from encuestas');
-                db.executeSql('delete from opciones');
-                db.executeSql('delete from preguntas');
-                db.executeSql('delete from tipos');
-                db.executeSql('delete from usuarios');
-                window.localStorage.clear();
-                window.location.href="index.html";
+
               },
               error: function(e) {
+                db.transaction(function (tx) {
+                    // ...
+                    tx.executeSql('delete from elecciones');
+                    tx.executeSql('delete from encuestas');
+                    tx.executeSql('delete from opciones');
+                    tx.executeSql('delete from preguntas');
+                    tx.executeSql('delete from tipos');
+                    tx.executeSql('delete from usuarios');
+                }, function (error) {
+                    alert('transaction error: ' + error.message);
+                }, function () {
+                  window.localStorage.clear();
+                  window.location.href="index.html";
+                });
 
-                db.executeSql('delete from elecciones');
-                db.executeSql('delete from encuestas');
-                db.executeSql('delete from opciones');
-                db.executeSql('delete from preguntas');
-                db.executeSql('delete from tipos');
-                db.executeSql('delete from usuarios');
-                window.localStorage.clear();
-                window.location.href="index.html";
               }
           });
 }
