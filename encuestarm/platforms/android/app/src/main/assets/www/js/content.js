@@ -1,45 +1,37 @@
 //ToDo: Mejorar control de errores; mejorar diseño; agregar filtro por usuario;
-
+var db = null;
 var totalPreguntas=0;
 var currentPregunta=0;
 var currentEncuesta=0;
 var tituloEncuesta="";
-var arrayPreguntas;
+var arrayPreguntas = new Array();
 var arrayResultados  = new Array();
 
-/************************************************
-getEncuestas: obtiene un listado de las encuestas habilitadas para este usuario
-ToDo: modificar URL de la API
-ToDo: mejorar diseño en el append
-ToDo: implementar filtro por usuario en la API
-************************************************/
-function getEncuestas()
-{
-  //reinicio variables
-   totalPreguntas=0;
-   currentPregunta=0;
-   currentEncuesta=0;
-   tituloEncuesta="";
-   arrayPreguntas=[];
-   arrayResultados  = new Array();
-  $.ajax({
-   type: "POST",
-   crossDomain: true,
-   url: "http://192.168.2.101/EncuestaApp/encuestas.php?action=getEncuestas&usuario="+localStorage.getItem("idUsuario"),
-   processData: false,
-   contentType: "application/json"
-  })
-  .success(function(datae, textStatus, jqXHR){
-for(var i=0;i<datae.length;i++){
-  //ToDo: modificar este append para mejorar el diseño
-  $("#content").append('<a href="#" class="btn btn-primary start" data-preguntas="'+(datae[i].preguntas-1)+'" data-id="'+datae[i].id+'">'+datae[i].nombre+'</a>');
+document.addEventListener("deviceready", onDeviceReady, false);
+
+function onDeviceReady() {
+  $("#title").html("Encuestas");
+ db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
+    db.transaction(function(tx) {
+    tx.executeSql('SELECT preguntas.encuesta_id,encuestas.titulo,count(*) as cantpreguntas FROM preguntas inner join encuestas on encuestas.id=preguntas.encuesta_id group by preguntas.encuesta_id,encuestas.titulo', [], function(tx, resultSet) {
+
+      for(var x = 0; x < resultSet.rows.length; x++) {
+              $("#content").append('<ul class="list-group mb-4 media-list"><li class="list-group-item"><a href="#" class="media shadow-15 start"  data-preguntas="'+(resultSet.rows.item(x).cantpreguntas-1)+'" data-id="'+resultSet.rows.item(x).encuesta_id+'" data-title="'+resultSet.rows.item(x).titulo+'"><div class="media-body"><h3>'+resultSet.rows.item(x).titulo+'</h3><p>'+resultSet.rows.item(x).cantpreguntas+' preguntas</p></div></a></li></ul>');
+          }
+
+    }, function(tx, error) {
+      mensaje('SELECT error: ' + error.message);
+    });
+  });
+
+
+
+}, function (error) {
+  mensaje("Error abriendo BD: "+ JSON.stringify(error));
+});
 }
 
-  })
-  .fail(function(jqXHR, textStatus, errorThrown){
-  alert("error");
-  });
-}
+
 
 /************************************************
 esto responde al click del boton de la encuesta que se quiere iniciar
@@ -47,8 +39,15 @@ setea las variables currentEncuesta y totalPreguntas
 obtiene un listado de las preguntas para dicha encuesta
 ************************************************/
 $(document).on('click', '.start', function () {
+   totalPreguntas=0;
+   currentPregunta=0;
+   currentEncuesta=0;
+   tituloEncuesta="";
+   arrayPreguntas = new Array();
+   arrayResultados  = new Array();
     currentEncuesta=$(this).data("id");
     totalPreguntas=$(this).data("preguntas");
+      $("#title").html($(this).data("title"));
     getPreguntas(currentEncuesta);
 //ToDo: mostrar titulo de la encuesta en algun lado
 });
@@ -70,24 +69,33 @@ ToDo: modificar URL de la API
 ************************************************/
 function getPreguntas(idEncuesta)
 {
-    $.ajax({
-     type: "POST",
-     crossDomain: true,
-     url: "http://192.168.2.101/EncuestaApp/encuestas.php?action=getPreguntas&idEncuesta="+idEncuesta,
-     processData: false,
-     contentType: "application/json"
-    })
-    .success(function(datae, textStatus, jqXHR){
-      //copio las preguntas en el array temporal
-    arrayPreguntas=datae;
-    currentPregunta=0;
-    //obtengo la primer pregunta
-    getPreguntaOpciones();
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-    alert("error");
-    });
 
+db.transaction(function (tx) {
+
+       var query = "SELECT * from preguntas";
+
+       tx.executeSql(query, [], function (tx, resultSet) {
+         //$("#content").empty();
+         //alert(idEncuesta);
+           for(var x = 0; x < resultSet.rows.length; x++) {
+             if(resultSet.rows.item(x).encuesta_id==idEncuesta){
+               alert(resultSet.rows.item(x).descripcion)
+               arrayPreguntas.push({id: resultSet.rows.item(x).id,nombre: resultSet.rows.item(x).descripcion});
+               currentPregunta=0;
+             }
+           //arrayPreguntas.push(resultSet.rows.item(x));
+           //currentPregunta=0;
+           }
+       },
+       function (tx, error) {
+           mensaje('SELECT error: ' + error.message);
+       });
+   }, function (error) {
+       mensaje('transaction error: ' + error.message);
+   }, function () {
+     //obtengo la primer pregunta
+     getPreguntaOpciones();
+   });
 }
 
 /************************************************
@@ -100,6 +108,7 @@ ToDo: implementar filtro por usuario
 ************************************************/
 function getPreguntaOpciones()
 {
+  alert("final "+arrayPreguntas);return;
   //guardar resultados de las respuestas si ya pasé la primer pregunta
   if(currentPregunta>0)
   {
@@ -176,4 +185,10 @@ $("#content").append('<hr><a href="#" class="btn btn-success continue">Continuar
     //cargar las encuestas disponibles
     getEncuestas();
   }
+}
+
+
+function mensaje(msg)
+{
+  alert(msg);
 }

@@ -1,27 +1,29 @@
 //ToDo: Mejorar control de errores; mejorar diseño; agregar filtro por usuario;
-
+var db = null;
 var totalPreguntas=0;
 var currentPregunta=0;
 var currentEncuesta=0;
 var tituloEncuesta="";
-var arrayPreguntas;
+var arrayPreguntas = new Array();
 var arrayResultados  = new Array();
 
 document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
-  var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
+  $("#title").html("Encuestas");
+ db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
     db.transaction(function(tx) {
     tx.executeSql('SELECT preguntas.encuesta_id,encuestas.titulo,count(*) as cantpreguntas FROM preguntas inner join encuestas on encuestas.id=preguntas.encuesta_id group by preguntas.encuesta_id,encuestas.titulo', [], function(tx, resultSet) {
 
       for(var x = 0; x < resultSet.rows.length; x++) {
-              $("#content").append('<ul class="list-group mb-4 media-list"><li class="list-group-item"><a href="#" class="media shadow-15 start"  data-preguntas="'+(resultSet.rows.item(x).cantpreguntas-1)+'" data-id="'+resultSet.rows.item(x).encuesta_id+'"><div class="media-body"><h3>'+resultSet.rows.item(x).titulo+'</h3><p>'+resultSet.rows.item(x).cantpreguntas+' preguntas</p></div></a></li></ul>');
+              $("#content").append('<ul class="list-group mb-4 media-list"><li class="list-group-item"><a href="#" class="media shadow-15 start"  data-preguntas="'+(resultSet.rows.item(x).cantpreguntas-1)+'" data-id="'+resultSet.rows.item(x).encuesta_id+'" data-title="'+resultSet.rows.item(x).titulo+'"><div class="media-body"><h3>'+resultSet.rows.item(x).titulo+'</h3><p>'+resultSet.rows.item(x).cantpreguntas+' preguntas</p></div></a></li></ul>');
           }
 
     }, function(tx, error) {
       mensaje('SELECT error: ' + error.message);
     });
   });
+
 
 
 }, function (error) {
@@ -37,8 +39,15 @@ setea las variables currentEncuesta y totalPreguntas
 obtiene un listado de las preguntas para dicha encuesta
 ************************************************/
 $(document).on('click', '.start', function () {
+   totalPreguntas=0;
+   currentPregunta=0;
+   currentEncuesta=0;
+   tituloEncuesta="";
+   arrayPreguntas = new Array();
+   arrayResultados  = new Array();
     currentEncuesta=$(this).data("id");
     totalPreguntas=$(this).data("preguntas");
+      $("#title").html($(this).data("title"));
     getPreguntas(currentEncuesta);
 //ToDo: mostrar titulo de la encuesta en algun lado
 });
@@ -51,6 +60,21 @@ $(document).on('click', '.continue', function () {
     getPreguntaOpciones();
 });
 
+function getEncuestas()
+{
+    $("#title").html("Encuestas");
+  db.transaction(function(tx) {
+  tx.executeSql('SELECT preguntas.encuesta_id,encuestas.titulo,count(*) as cantpreguntas FROM preguntas inner join encuestas on encuestas.id=preguntas.encuesta_id group by preguntas.encuesta_id,encuestas.titulo', [], function(tx, resultSet) {
+
+    for(var x = 0; x < resultSet.rows.length; x++) {
+            $("#content").append('<ul class="list-group mb-4 media-list"><li class="list-group-item"><a href="#" class="media shadow-15 start"  data-preguntas="'+(resultSet.rows.item(x).cantpreguntas-1)+'" data-id="'+resultSet.rows.item(x).encuesta_id+'" data-title="'+resultSet.rows.item(x).titulo+'"><div class="media-body"><h3>'+resultSet.rows.item(x).titulo+'</h3><p>'+resultSet.rows.item(x).cantpreguntas+' preguntas</p></div></a></li></ul>');
+        }
+
+  }, function(tx, error) {
+    mensaje('SELECT error: ' + error.message);
+  });
+});
+}
 
 /************************************************
 getPreguntas: obtiene un listado de las preguntas para la encuesta seleccionada
@@ -60,24 +84,33 @@ ToDo: modificar URL de la API
 ************************************************/
 function getPreguntas(idEncuesta)
 {
-    $.ajax({
-     type: "POST",
-     crossDomain: true,
-     url: "http://192.168.2.101/EncuestaApp/encuestas.php?action=getPreguntas&idEncuesta="+idEncuesta,
-     processData: false,
-     contentType: "application/json"
-    })
-    .success(function(datae, textStatus, jqXHR){
-      //copio las preguntas en el array temporal
-    arrayPreguntas=datae;
-    currentPregunta=0;
-    //obtengo la primer pregunta
-    getPreguntaOpciones();
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-    alert("error");
-    });
 
+db.transaction(function (tx) {
+
+       var query = "SELECT * from preguntas";
+
+       tx.executeSql(query, [], function (tx, resultSet) {
+         //$("#content").empty();
+         //alert(idEncuesta);
+           for(var x = 0; x < resultSet.rows.length; x++) {
+             if(resultSet.rows.item(x).encuesta_id==idEncuesta){
+               //alert(resultSet.rows.item(x).descripcion)
+               arrayPreguntas.push({id: resultSet.rows.item(x).id,nombre: resultSet.rows.item(x).descripcion});
+               currentPregunta=0;
+             }
+           //arrayPreguntas.push(resultSet.rows.item(x));
+           //currentPregunta=0;
+           }
+       },
+       function (tx, error) {
+           mensaje('SELECT error: ' + error.message);
+       });
+   }, function (error) {
+       mensaje('transaction error: ' + error.message);
+   }, function () {
+     //obtengo la primer pregunta
+     getPreguntaOpciones();
+   });
 }
 
 /************************************************
@@ -90,6 +123,7 @@ ToDo: implementar filtro por usuario
 ************************************************/
 function getPreguntaOpciones()
 {
+
   //guardar resultados de las respuestas si ya pasé la primer pregunta
   if(currentPregunta>0)
   {
@@ -116,49 +150,53 @@ function getPreguntaOpciones()
 //si NO estoy en la ultima pregunta
   if(currentPregunta<=totalPreguntas)
   {
-    //pido los detalles de la siguiente preguntas
-    $.ajax({
-     type: "POST",
-     crossDomain: true,
-     url: "http://192.168.2.101/EncuestaApp/encuestas.php?action=getPreguntaDetalle&idPregunta="+arrayPreguntas[currentPregunta].id,
-     processData: false,
-     contentType: "application/json"
-    })
-    .success(function(datae, textStatus, jqXHR){
-    //mostrar mis opciones para esta pregunta
-    $("#content").empty(); //vaciar el div
-    $("#content").append('<legend>'+arrayPreguntas[currentPregunta].nombre+'</legend>'); //titulo
-for(var i=0;i<datae.length;i++){
-      switch (datae[i].clase) { //segun el tipo mostrar el control adecuado
-        //en cada elemento se agregan atributos para mantener informaion importante
-        //data-pregunta: el id de la pregunta
-        //data-eleccion: el id de la opcion (respuesta)
-        //data-clase: el id del tipo de objeto (check, radio, text, etc)
-        //ToDo: modificar el append para mejorar el diseño
-        case 'checkbox':
-            $("#content").append('<input type="checkbox" id="option'+datae[i].id+'" value="'+datae[i].id+'" data-pregunta="'+arrayPreguntas[currentPregunta].id+'" data-eleccion="'+datae[i].id+'" data-clase="'+datae[i].clase_id+'" > '+datae[i].nombre+'<br>');
-          break;
-          case 'radio':
-              $("#content").append('<input type="radio" id="option'+datae[i].id+'" value="'+datae[i].id+'" data-pregunta="'+arrayPreguntas[currentPregunta].id+'" data-eleccion="'+datae[i].id+'" data-clase="'+datae[i].clase_id+'"> '+datae[i].nombre+'<br>');
-            break;
-            case 'text':
-                $("#content").append('<p>'+datae[i].nombre+'</p><input type="text" id="option'+datae[i].id+'" data-pregunta="'+arrayPreguntas[currentPregunta].id+'" data-eleccion="'+datae[i].id+'" data-clase="'+datae[i].clase_id+'"><br>');
-              break;
-      }
-}
-currentPregunta++; //incremento la posicion de la pregunta actual (para la proxima vez que se llame)
-//muestro el boton Continuar
-$("#content").append('<hr><a href="#" class="btn btn-success continue">Continuar</a>');
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-    alert("error");
-    });
+    db.transaction(function (tx) {
+
+           var query = "SELECT  elecciones.id,elecciones.descripcion,tipos.clase,tipos.id as idclase from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id where  estado is null";
+
+           tx.executeSql(query, [], function (tx, resultSet) {
+             $("#content").empty();
+              $("#content").append('<legend>'+arrayPreguntas[currentPregunta].nombre+'</legend>'); //titulo
+               for(var x = 0; x < resultSet.rows.length; x++) {
+                 if(resultSet.rows.item(x).pregunta_id=arrayPreguntas[currentPregunta].id){
+                 //mostrar mis opciones para esta pregunta
+                 switch (resultSet.rows.item(x).clase) { //segun el tipo mostrar el control adecuado
+                     //en cada elemento se agregan atributos para mantener informaion importante
+                     //data-pregunta: el id de la pregunta
+                     //data-eleccion: el id de la opcion (respuesta)
+                     //data-clase: el id del tipo de objeto (check, radio, text, etc)
+                     //ToDo: modificar el append para mejorar el diseño
+                     case 'checkbox':
+                         $("#content").append('<input type="checkbox" id="option'+resultSet.rows.item(x).id+'" value="'+resultSet.rows.item(x).id+'" data-pregunta="'+arrayPreguntas[currentPregunta].id+'" data-eleccion="'+resultSet.rows.item(x).id+'" data-clase="'+resultSet.rows.item(x).idclase+'" > '+resultSet.rows.item(x).descripcion+'<br>');
+                       break;
+                       case 'radio':
+                           $("#content").append('<input type="radio" id="option'+resultSet.rows.item(x).id+'" value="'+resultSet.rows.item(x).id+'" data-pregunta="'+arrayPreguntas[currentPregunta].id+'" data-eleccion="'+resultSet.rows.item(x).id+'" data-clase="'+resultSet.rows.item(x).idclase+'"> '+resultSet.rows.item(x).descripcion+'<br>');
+                         break;
+                         case 'text':
+                             $("#content").append('<p>'+resultSet.rows.item(x).descripcion+'</p><input type="text" id="option'+resultSet.rows.item(x).id+'" data-pregunta="'+arrayPreguntas[currentPregunta].id+'" data-eleccion="'+resultSet.rows.item(x).id+'" data-clase="'+resultSet.rows.item(x).idclase+'"><br>');
+                           break;
+                   }
+
+
+                 }
+               }
+           },
+           function (tx, error) {
+               mensaje('SELECT error: ' + error.message);
+           });
+       }, function (error) {
+           mensaje('transaction error: ' + error.message);
+       }, function () {
+       currentPregunta++; //incremento la posicion de la pregunta actual (para la proxima vez que se llame)
+       //muestro el boton Continuar
+       $("#content").append('<hr><a href="#" class="btn btn-success continue">Continuar</a>');
+       });
 
   }
   else {
     //llegue al final de la encuesta
     //guardo los resultados
-    console.log(arrayResultados);
+    alert(arrayResultados);
     //ToDo: almacenar los resultados en una BD?
 
     //vaciar el div
@@ -166,4 +204,10 @@ $("#content").append('<hr><a href="#" class="btn btn-success continue">Continuar
     //cargar las encuestas disponibles
     getEncuestas();
   }
+}
+
+
+function mensaje(msg)
+{
+  alert(msg);
 }

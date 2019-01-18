@@ -17,7 +17,7 @@ $("#submit").on("click",function(){
       var query = "SELECT * from usuarios where nombre=? and password=?";
 
       tx.executeSql(query, [$("#usuario").val(),$("#pass").val()], function (tx, resultSet) {
-        alert(resultSet.rows.length);
+        
         if(resultSet.rows.length==0)
         {
           $("#error").css("display","block");
@@ -38,6 +38,6 @@ $("#submit").on("click",function(){
   }, function (error) {
       alert('transaction error: ' + error.message);
   }, function () {
-      alert('transaction ok');
+
   });
 });
