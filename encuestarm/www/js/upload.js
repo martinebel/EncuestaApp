@@ -1,3 +1,5 @@
+var urlAPI='http://192.168.2.101/EncuestaApp/';
+
 var db = null;
 var arrayResultados  = new Array();
 
@@ -29,7 +31,7 @@ function subirdatos()
 {
   $.ajax({
     type: 'POST',
-    url: 'http://192.168.2.101/EncuestaApp/upload.php',
+    url: urlAPI+'upload.php',
     data: {data : JSON.stringify(arrayResultados)},
               dataType: "json",
               async: false,

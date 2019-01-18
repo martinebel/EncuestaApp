@@ -1,3 +1,5 @@
+var urlAPI='http://192.168.2.101/EncuestaApp/';
+
 mensaje("Conectando al servidor");
 document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -16,7 +18,7 @@ function elecciones()
 var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
-              url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=elecciones",
+              url: urlAPI+"bdfetch.php?tabla=elecciones",
               dataType: "json",
               async: false,
               success: function(res) {
@@ -50,7 +52,7 @@ function encuestas()
 var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
-              url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=encuestas",
+              url: urlAPI+"bdfetch.php?tabla=encuestas",
               dataType: "json",
               async: false,
               success: function(res) {
@@ -84,7 +86,7 @@ function opciones()
 var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
-              url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=opciones",
+              url: urlAPI+"bdfetch.php?tabla=opciones",
               dataType: "json",
               async: false,
               success: function(res) {
@@ -118,7 +120,7 @@ function preguntas()
 var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
-              url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=preguntas",
+              url: urlAPI+"bdfetch.php?tabla=preguntas",
               dataType: "json",
               async: false,
               success: function(res) {
@@ -152,7 +154,7 @@ function tipos()
 var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
-              url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=tipos",
+              url: urlAPI+"bdfetch.php?tabla=tipos",
               dataType: "json",
               async: false,
               success: function(res) {
@@ -186,7 +188,7 @@ function usuarios()
 var db = window.sqlitePlugin.openDatabase({ name: 'encuesta.db', location: 'default' }, function (db) {
 
   $.ajax({
-              url: "http://192.168.2.101/EncuestaApp/bdfetch.php?tabla=usuarios",
+              url: urlAPI+"bdfetch.php?tabla=usuarios",
               dataType: "json",
               async: false,
               success: function(res) {
