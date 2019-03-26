@@ -1,4 +1,4 @@
-var urlAPI='http://codingosoft.com/encuesta/';
+var urlAPI='http://resistencia.gob.ar/appencuesta/';
 
 var db = null;
 var arrayResultados  = new Array();
