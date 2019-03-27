@@ -10,12 +10,32 @@ mensaje("Comprobando datos");
 //crear las tablas si no existen
     db.executeSql('CREATE TABLE  elecciones (id INTEGER,descripcion)');
     db.executeSql('CREATE TABLE  encuestas (id INTEGER,titulo,fecha_inicio,fecha_cierre,fecha_creacion)');
-    db.executeSql('CREATE TABLE  opciones (id INTEGER,eleccion_id,tipo_id,pregunta_id,estado)');
+    db.executeSql('CREATE TABLE  opciones (id INTEGER,eleccion_id,tipo_id,pregunta_id)');
     db.executeSql('CREATE TABLE  preguntas (id INTEGER,descripcion,encuesta_id)');
     db.executeSql('CREATE TABLE  tipos (id INTEGER,clase)');
-    db.executeSql('CREATE TABLE  usuarios (idUsuario INTEGER,nombre,password,tipo)');
+    db.executeSql('CREATE TABLE  usuarios (id INTEGER,nombre,password,tipo)');
+    db.executeSql('CREATE TABLE  encuestas_x_usuario (encuesta_id INTEGER,usuario_id INTEGER)');
+    db.executeSql('CREATE TABLE  respuestas (id INTEGER,opcion_id INTEGER,estado)');
 
     mensaje("Leyendo datos");
+
+    db.transaction(function(tx) {
+    tx.executeSql('SELECT count(*) AS mycount FROM preguntas', [], function(tx, rs) {
+      alert("filas: "+rs.rows.item(0).mycount);
+
+    }, function(tx, error) {
+      mensaje('SELECT error: ' + error.message);
+    });
+  });
+
+  db.transaction(function(tx) {
+  tx.executeSql('SELECT count(*) AS mycount FROM opciones', [], function(tx, rs) {
+    alert("filas: "+rs.rows.item(0).mycount);
+
+  }, function(tx, error) {
+    mensaje('SELECT error: ' + error.message);
+  });
+});
 
     db.transaction(function(tx) {
     tx.executeSql('SELECT count(*) AS mycount FROM usuarios', [], function(tx, rs) {

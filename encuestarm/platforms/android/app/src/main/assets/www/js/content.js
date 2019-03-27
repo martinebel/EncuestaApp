@@ -123,7 +123,8 @@ ToDo: implementar filtro por usuario
 ************************************************/
 function getPreguntaOpciones()
 {
-
+alert(currentPregunta);
+alert(totalPreguntas);
   //guardar resultados de las respuestas si ya pasé la primer pregunta
   if(currentPregunta>0)
   {
@@ -152,14 +153,18 @@ function getPreguntaOpciones()
   {
     db.transaction(function (tx) {
 
-           var query = "SELECT  elecciones.id,elecciones.descripcion,tipos.clase,tipos.id as idclase,opciones.estado,opciones.pregunta_id from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id where estado is null";
+           var query = "SELECT  elecciones.id,elecciones.descripcion,tipos.clase,tipos.id as idclase,opciones.pregunta_id from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id ";
 
            tx.executeSql(query, [], function (tx, resultSet) {
              $("#content").empty();
               $("#content").append('<legend>'+arrayPreguntas[currentPregunta].nombre+'</legend>'); //titulo
+alert(resultSet.rows.length);
                for(var x = 0; x < resultSet.rows.length; x++) {
+                 alert(arrayPreguntas[currentPregunta].id);
+                 alert(resultSet.rows.item(x).pregunta_id);
+                  alert(resultSet.rows.item(x).descripcion);
                  if(resultSet.rows.item(x).pregunta_id==arrayPreguntas[currentPregunta].id){
-
+alert(resultSet.rows.item(x).descripcion);
                  //mostrar mis opciones para esta pregunta
                  switch (resultSet.rows.item(x).clase) { //segun el tipo mostrar el control adecuado
                      //en cada elemento se agregan atributos para mantener informaion importante
@@ -209,7 +214,7 @@ function getPreguntaOpciones()
 function pendientes()
 {
   db.transaction(function(tx) {
-  tx.executeSql('SELECT count(*) AS mycount FROM opciones where estado is not null', [], function(tx, rs) {
+  tx.executeSql('SELECT count(*) AS mycount FROM respuestas where estado is not null', [], function(tx, rs) {
     $("#pendientes").html('<i class="material-icons">star</i> Actualizar datos <span class="badge badge-secondary">'+rs.rows.item(0).mycount+'</span>');
   }, function(tx, error) {
     mensaje('SELECT error: ' + error.message);
@@ -221,7 +226,7 @@ function saveResults()
 {
 
   db.transaction(function(tx) {
-  tx.executeSql('SELECT max(id) AS mycount FROM opciones', [], function(tx, rs) {
+  tx.executeSql('SELECT max(id) AS mycount FROM respuestas', [], function(tx, rs) {
     //mensaje("filas: "+rs.rows.item(0).mycount);
     maximo=rs.rows.item(0).mycount;
     maximo++;
@@ -232,7 +237,7 @@ function saveResults()
 
   db.transaction(function(tx) {
     $.each(arrayResultados, function(i, item) {
-      tx.executeSql("INSERT INTO opciones values (?,?,?,?,?)", [maximo,item.eleccion_id,item.tipo_id,item.pregunta_id,item.estado]);
+      tx.executeSql("INSERT INTO respuestas values (?,?,?)", [maximo,item.eleccion_id,item.estado]);
       maximo++;
     });
   }, function(e) {

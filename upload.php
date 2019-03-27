@@ -26,7 +26,7 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
 
     foreach($data as $d){
     //  echo "INSERT INTO opciones (id, eleccion_id, tipo_id, pregunta_id, estado) VALUES (NULL,'".$d['eleccion_id']."','".$d['tipo_id']."','".$d['pregunta_id']."','".$d['estado']."')";
-       $stmt = $dbh->prepare("INSERT INTO opciones (id, eleccion_id, tipo_id, pregunta_id, estado) VALUES (NULL,'".$d['eleccion_id']."','".$d['tipo_id']."','".$d['pregunta_id']."','".$d['estado']."')");
+       $stmt = $dbh->prepare("INSERT INTO respuestas (id, opcion_id, estado) VALUES (NULL,'".$d['opcion_id']."','".$d['estado']."')");
       $stmt->execute();
     }
 //  die();

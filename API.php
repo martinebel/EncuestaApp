@@ -20,12 +20,8 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
   header('Content-Type: application/json');
 
 $table_arr = array();
-if($_REQUEST["tabla"]!="opciones"){
 $stmt = $dbh->prepare("SELECT * from ".$_REQUEST["tabla"]);
-}
-else {
-$stmt = $dbh->prepare("SELECT * from opciones where estado is null");
-}
+
 $stmt->execute();
 $table_arr = $stmt->fetchAll(PDO::FETCH_ASSOC);
 echo json_encode($table_arr);

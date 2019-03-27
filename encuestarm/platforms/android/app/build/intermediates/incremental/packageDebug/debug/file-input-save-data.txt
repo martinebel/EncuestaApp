@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Fri Jan 18 17:46:43 ART 2019
+#Tue Mar 26 20:57:02 ART 2019
 5.base=C\:\\xampp\\htdocs\\EncuestaApp\\encuestarm\\platforms\\android\\app\\build\\intermediates\\assets\\debug
 42.base=C\:\\xampp\\htdocs\\EncuestaApp\\encuestarm\\platforms\\android\\app\\build\\intermediates\\assets\\debug
 22.path=www/js/upload.js
@@ -95,7 +95,7 @@ count=43
 41.set=NATIVE_RESOURCE
 28.path=www/init.html
 30.base=C\:\\xampp\\htdocs\\EncuestaApp\\encuestarm\\platforms\\android\\app\\build\\intermediates\\assets\\debug
-10.path=www/img/logo-w.png
+10.path=www/js/bootstrap.min.js
 13.baseType=DIRECTORY
 41.baseType=DIRECTORY
 38.path=www/js/jquery-3.2.1.min.js
@@ -171,5 +171,5 @@ count=43
 42.path=www/js/circle-progress.min.js
 5.baseType=DIRECTORY
 1.base=C\:\\xampp\\htdocs\\EncuestaApp\\encuestarm\\platforms\\android\\app\\build\\intermediates\\assets\\debug
-9.path=www/js/bootstrap.min.js
+9.path=www/img/logo-w.png
 5.set=ASSET
