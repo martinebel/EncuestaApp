@@ -123,8 +123,7 @@ ToDo: implementar filtro por usuario
 ************************************************/
 function getPreguntaOpciones()
 {
-alert(currentPregunta);
-alert(totalPreguntas);
+
   //guardar resultados de las respuestas si ya pasé la primer pregunta
   if(currentPregunta>0)
   {
@@ -153,18 +152,16 @@ alert(totalPreguntas);
   {
     db.transaction(function (tx) {
 
-           var query = "SELECT  elecciones.id,elecciones.descripcion,tipos.clase,tipos.id as idclase,opciones.pregunta_id from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id ";
+           var query = "SELECT  opciones.id,elecciones.descripcion,tipos.clase,tipos.id as idclase,opciones.pregunta_id from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id ";
 
            tx.executeSql(query, [], function (tx, resultSet) {
              $("#content").empty();
               $("#content").append('<legend>'+arrayPreguntas[currentPregunta].nombre+'</legend>'); //titulo
-alert(resultSet.rows.length);
+
                for(var x = 0; x < resultSet.rows.length; x++) {
-                 alert(arrayPreguntas[currentPregunta].id);
-                 alert(resultSet.rows.item(x).pregunta_id);
-                  alert(resultSet.rows.item(x).descripcion);
+
                  if(resultSet.rows.item(x).pregunta_id==arrayPreguntas[currentPregunta].id){
-alert(resultSet.rows.item(x).descripcion);
+
                  //mostrar mis opciones para esta pregunta
                  switch (resultSet.rows.item(x).clase) { //segun el tipo mostrar el control adecuado
                      //en cada elemento se agregan atributos para mantener informaion importante
