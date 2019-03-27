@@ -123,8 +123,7 @@ ToDo: implementar filtro por usuario
 ************************************************/
 function getPreguntaOpciones()
 {
-alert(currentPregunta);
-alert(totalPreguntas);
+
   //guardar resultados de las respuestas si ya pasé la primer pregunta
   if(currentPregunta>0)
   {
@@ -153,14 +152,14 @@ alert(totalPreguntas);
   {
     db.transaction(function (tx) {
 
-           var query = "SELECT  elecciones.id,elecciones.descripcion,tipos.clase,tipos.id as idclase,opciones.pregunta_id from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id ";
+           var query = "SELECT  opciones.id,elecciones.descripcion,tipos.clase,tipos.id as idclase,opciones.pregunta_id from opciones inner join elecciones on elecciones.id=opciones.eleccion_id inner join tipos on tipos.id=opciones.tipo_id ";
 
            tx.executeSql(query, [], function (tx, resultSet) {
              $("#content").empty();
               $("#content").append('<legend>'+arrayPreguntas[currentPregunta].nombre+'</legend>'); //titulo
 
                for(var x = 0; x < resultSet.rows.length; x++) {
-              
+
                  if(resultSet.rows.item(x).pregunta_id==arrayPreguntas[currentPregunta].id){
 
                  //mostrar mis opciones para esta pregunta

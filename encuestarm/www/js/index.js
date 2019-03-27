@@ -20,24 +20,6 @@ mensaje("Comprobando datos");
     mensaje("Leyendo datos");
 
     db.transaction(function(tx) {
-    tx.executeSql('SELECT count(*) AS mycount FROM preguntas', [], function(tx, rs) {
-      alert("filas: "+rs.rows.item(0).mycount);
-
-    }, function(tx, error) {
-      mensaje('SELECT error: ' + error.message);
-    });
-  });
-
-  db.transaction(function(tx) {
-  tx.executeSql('SELECT count(*) AS mycount FROM opciones', [], function(tx, rs) {
-    alert("filas: "+rs.rows.item(0).mycount);
-
-  }, function(tx, error) {
-    mensaje('SELECT error: ' + error.message);
-  });
-});
-
-    db.transaction(function(tx) {
     tx.executeSql('SELECT count(*) AS mycount FROM usuarios', [], function(tx, rs) {
       //mensaje("filas: "+rs.rows.item(0).mycount);
       if(rs.rows.item(0).mycount=='0')
